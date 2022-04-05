@@ -2,7 +2,7 @@
 
 Collection of Processing-based data interfaces for our team. They are used primaily to simplify interacting with our systems with a computer, generally to display data from a system.
 
-They were all written in the Processing language and should be able to run on any system that is supported by it. They all operate by communicating with a microcontroller over a serial interface.
+They were all written in the [Processing](https://processing.org/) language using **version 3** and should be able to run on any system that is supported by it. They all operate by communicating with a microcontroller over a serial interface.
 
 ## Telemetry UI
 
