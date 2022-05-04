@@ -3,6 +3,10 @@ import grafica.*;
 import g4p_controls.*;
 import processing.serial.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
 Serial arduino; // used to communicate to the arduino
 int BAUDRATE = 9600;
 
@@ -10,19 +14,26 @@ char start = '[';
 char ending = ']';
 char separator = ';';
 
+int loadCells = 6;
+
 int digits = 10;
 char[] buffer = new char[digits]; // buffer to read in data
 
-boolean recordData = false;
-PrintWriter output = createWriter("data.csv"); // to write data log
+boolean recordData = true;
+Table table = new Table();
+String csvName = "data.csv";
 
 GPlot plot;
-int nPointsPlot = 500;
-int loadCells = 6;
+int nPointsPlot = 300;
 String[] legends = new String[loadCells];
 float[] legendsX = new float[loadCells];
 float[] legendsY = new float[loadCells];
 GPointsArray[] dataPoints = new GPointsArray[loadCells];
+
+float[] raw = new float[loadCells];
+float[] zero = new float[loadCells];
+float[] scaling = new float[loadCells];
+float[] output = new float[loadCells];
 
 public void setup() {
   if (Serial.list().length == 0) {
@@ -50,7 +61,7 @@ public void setup() {
   plot.setLineColor(color(random(255), random(255), random(255)));
 
   for (int i = 1; i < loadCells; i++) {
-    legends[i] = new String("Load Cell " + str(i + 1));
+    legends[i] = new String("Load Cell " + (i + 1));
     legendsX[i] = legendsX[0] + i * 0.15;
     legendsY[i] = legendsY[0];
     
@@ -61,14 +72,25 @@ public void setup() {
   
   plot.activatePointLabels();
   
-  output.println("Test");
-  output.flush();
+  if (recordData) {
+    for (int i = 1; i <= loadCells; i++) {
+      table.addColumn("Raw LC" + i);
+      table.addColumn("Zero LC" + i);
+      table.addColumn("Scaling LC" + i);
+      table.addColumn("Final LC" + i);
+    }
+  }
+  
+  for (int i = 0; i < loadCells; i++) {
+    zero[i] = 0;
+    scaling[i] = 1;
+  }
 }
 
 public void draw() {
   background(230);
   
-  // read one packet
+  // read one packet which consists of all the load cell readings e.g. [1;2;3;4;5;6]
   if (arduino.available() > 0) {
     while (arduino.readChar() != start) {
       // get to the start of the packet
@@ -87,13 +109,14 @@ public void draw() {
         }
       }
       
-      float reading = charToFloat(buffer);
-      dataPoints[lc].add(frameCount, reading);
+      raw[lc] = charToFloat(buffer);
+      dataPoints[lc].add(frameCount, raw[lc]);
       if (frameCount > nPointsPlot) {
         dataPoints[lc].remove(0);
       }
     }
     
+    // for the last load cell reading
     for (int i = 0; i < digits; i++) {
       char current = arduino.readChar();
       if (current == ending) {
@@ -105,10 +128,23 @@ public void draw() {
       }
     }
     
-    float reading = charToFloat(buffer);
-    dataPoints[loadCells - 1].add(frameCount, reading);
+    raw[loadCells - 1] = charToFloat(buffer);
+    dataPoints[loadCells - 1].add(frameCount, raw[loadCells - 1]);
     if (frameCount > nPointsPlot) {
       dataPoints[loadCells - 1].remove(0);
+    }
+    
+    if (recordData) {
+      TableRow newRow = table.addRow();
+      
+      for (int i = 0; i < loadCells; i++) {
+        newRow.setFloat("Raw LC" + (i + 1), raw[i]);
+        newRow.setFloat("Zero LC" + (i + 1), zero[i]);
+        newRow.setFloat("Scaling LC" + (i + 1), scaling[i]);
+        newRow.setFloat("Final LC" + (i + 1), raw[i]);
+      }
+      
+      saveTable(table, csvName);
     }
   }
   
@@ -135,7 +171,6 @@ public void draw() {
   plot.drawLegend(legends, legendsX, legendsY);
   
   plot.endDraw();
-
 }
 
 float charToFloat(char[] input) {
