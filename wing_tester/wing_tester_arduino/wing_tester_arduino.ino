@@ -57,7 +57,7 @@ void loop() {
     scale34.set_gain(128);
     long reading4 = scale34.read();
     //Serial.print(reading4);
-    Serial.print(i / 2);
+    Serial.print(i / 2.0);
     Serial.print(separator);
   } else {
     Serial.print(separator);

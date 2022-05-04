@@ -81,13 +81,6 @@ public void draw() {
           for (int j = i; j < digits; j++) {
             buffer[j] = '\0';
           }
-          
-          for (int j = 0; j < i; j++) {
-            print(buffer[j]);
-          }
-          print(" " + new String(buffer));
-          println();
-          
           break;
         } else {
           buffer[i] = current;
