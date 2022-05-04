@@ -141,8 +141,6 @@ public void draw() {
 float charToFloat(char[] input) {
   // Take in a character array and convert it to a float number that is returned
   String temp = new String(input);
-  //print(temp + " ");
   float x = float(temp);
-  //println(x);
   return x;
 }

@@ -31,14 +31,14 @@ void loop() {
     scale12.set_gain(32);
     long reading1 = scale12.read();
     //Serial.print(reading1);
-    Serial.print(i);
+    Serial.print(i * 2);
     Serial.print(separator);
 
     // with a gain factor of 64 or 128, channel A is selected
     scale12.set_gain(128);
     long reading2 = scale12.read();
     //Serial.print(reading2);
-    Serial.print(2 * i);
+    Serial.print(i);
     Serial.print(separator);
   } else {
     Serial.print(separator);
@@ -50,14 +50,14 @@ void loop() {
     scale34.set_gain(32);
     long reading3 = scale34.read();
     //Serial.print(reading3);
-    Serial.print(i % 10);
+    Serial.print(i / 2);
     Serial.print(separator);
 
     // with a gain factor of 64 or 128, channel A is selected
     scale34.set_gain(128);
     long reading4 = scale34.read();
     //Serial.print(reading4);
-    Serial.print(i / 2.0);
+    Serial.print(i / 3.0);
     Serial.print(separator);
   } else {
     Serial.print(separator);
@@ -68,7 +68,8 @@ void loop() {
     // with a gain factor of 32, channel B is selected
     scale56.set_gain(32);
     long reading5 = scale56.read();
-    Serial.print(reading5);
+    //Serial.print(reading5);
+    Serial.print(i % 10);
     Serial.print(separator);
 
     // with a gain factor of 64 or 128, channel A is selected
