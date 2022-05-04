@@ -31,7 +31,7 @@ void loop() {
     scale12.set_gain(32);
     long reading1 = scale12.read();
     //Serial.print(reading1);
-    Serial.print(1 + i);
+    Serial.print(i);
     Serial.print(separator);
 
     // with a gain factor of 64 or 128, channel A is selected

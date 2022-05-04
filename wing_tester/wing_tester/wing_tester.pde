@@ -3,6 +3,8 @@ import grafica.*;
 import g4p_controls.*;
 import processing.serial.*;
 
+import java.util.Random;
+
 Serial arduino; // used to communicate to the arduino
 int BAUDRATE = 9600;
 
@@ -21,6 +23,8 @@ GPlot plot;
 int nPointsPlot = 500;
 int loadCells = 6;
 GPointsArray[] dataPoints = new GPointsArray[loadCells];
+
+public Random r;
 
 public void setup() {
   if (Serial.list().length == 0) {
@@ -44,9 +48,10 @@ public void setup() {
   for(int i = 0; i < loadCells; i++) {
     dataPoints[i] = new GPointsArray(nPointsPlot);
     plot.addLayer("Load Cell " + str(i + 1), dataPoints[i]);
-    plot.getLayer("Load Cell " + str(i + 1)).setLineColor(color(i * 40, i * 40, 255));
+    plot.getLayer("Load Cell " + str(i + 1)).setLineColor(color(random(255), random(255), random(255)));
   }
   
+  plot.activatePointLabels();
 }
 
 public void draw() {
@@ -70,7 +75,7 @@ public void draw() {
       }
       
       float reading = charToFloat(buffer);
-      dataPoints[lc].add(15 + 10 * frameCount, reading);
+      dataPoints[lc].add(frameCount, reading);
       if (frameCount > nPointsPlot) {
         dataPoints[lc].remove(0);
       }
@@ -88,7 +93,7 @@ public void draw() {
     }
     
     float reading = charToFloat(buffer);
-    dataPoints[loadCells - 1].add(15 + 10 * frameCount, reading);
+    dataPoints[loadCells - 1].add(frameCount, reading);
     if (frameCount > nPointsPlot) {
       dataPoints[loadCells - 1].remove(0);
     }
@@ -96,8 +101,15 @@ public void draw() {
   
   plot.setPoints(new GPointsArray());
   
-  for(int i = 1; i < loadCells; i++) {
-    plot.getLayer("Load Cell " + str(i)).setPoints(dataPoints[i]);
+  String[] legends = new String[loadCells];
+  float[] legendsX = new float[loadCells];
+  float[] legendsY = new float[loadCells];
+  
+  for(int i = 0; i < loadCells; i++) {
+    plot.getLayer("Load Cell " + str(i + 1)).setPoints(dataPoints[i]);
+    legends[i] = new String("Load Cell " + str(i + 1));
+    legendsX[i] = 0.07 + i * 0.15;
+    legendsY[i] = 0.92;
   }
   
   plot.beginDraw();
@@ -108,9 +120,10 @@ public void draw() {
   plot.drawTopAxis();
   plot.drawRightAxis();
   plot.drawTitle();
+  plot.drawLegend(legends, legendsX, legendsY);
+  plot.drawLabels();
   
-  for(int i = 1; i < loadCells; i++) {
-    plot.getLayer("Load Cell " + str(i)).drawPoints();
+  for(int i = 1; i <= loadCells; i++) {
     plot.getLayer("Load Cell " + str(i)).drawLines();
   }
   
