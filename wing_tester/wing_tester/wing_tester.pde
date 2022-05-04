@@ -3,8 +3,6 @@ import grafica.*;
 import g4p_controls.*;
 import processing.serial.*;
 
-import java.util.Random;
-
 Serial arduino; // used to communicate to the arduino
 int BAUDRATE = 9600;
 
@@ -12,19 +10,19 @@ char start = '[';
 char ending = ']';
 char separator = ';';
 
-boolean recordData = false;
-
 int digits = 10;
 char[] buffer = new char[digits]; // buffer to read in data
 
-PrintWriter output; // to write data log
+boolean recordData = false;
+PrintWriter output = createWriter("data.csv"); // to write data log
 
 GPlot plot;
 int nPointsPlot = 500;
 int loadCells = 6;
+String[] legends = new String[loadCells];
+float[] legendsX = new float[loadCells];
+float[] legendsY = new float[loadCells];
 GPointsArray[] dataPoints = new GPointsArray[loadCells];
-
-public Random r;
 
 public void setup() {
   if (Serial.list().length == 0) {
@@ -44,14 +42,27 @@ public void setup() {
   plot.setAxesOffset(4);
   plot.setTicksLength(4);
   plot.getYAxis().setAxisLabelText("Load Cell Readings");
+  
+  legends[0] = new String("Load Cell 1");
+  legendsX[0] = 0.07;
+  legendsY[0] = 0.92;
+  dataPoints[0] = new GPointsArray(nPointsPlot);
+  plot.setLineColor(color(random(255), random(255), random(255)));
 
-  for(int i = 0; i < loadCells; i++) {
+  for(int i = 1; i < loadCells; i++) {
+    legends[i] = new String("Load Cell " + str(i + 1));
+    legendsX[i] = legendsX[0] + i * 0.15;
+    legendsY[i] = legendsY[0];
+    
     dataPoints[i] = new GPointsArray(nPointsPlot);
-    plot.addLayer("Load Cell " + str(i + 1), dataPoints[i]);
-    plot.getLayer("Load Cell " + str(i + 1)).setLineColor(color(random(255), random(255), random(255)));
+    plot.addLayer(legends[i], dataPoints[i]);
+    plot.getLayer(legends[i]).setLineColor(color(random(255), random(255), random(255)));
   }
   
   plot.activatePointLabels();
+  
+  output.println("Test");
+  output.flush();
 }
 
 public void draw() {
@@ -99,19 +110,12 @@ public void draw() {
     }
   }
   
-  plot.setPoints(new GPointsArray());
+  plot.setPoints(dataPoints[0]);
   
-  String[] legends = new String[loadCells];
-  float[] legendsX = new float[loadCells];
-  float[] legendsY = new float[loadCells];
-  
-  for(int i = 0; i < loadCells; i++) {
-    plot.getLayer("Load Cell " + str(i + 1)).setPoints(dataPoints[i]);
-    legends[i] = new String("Load Cell " + str(i + 1));
-    legendsX[i] = 0.07 + i * 0.15;
-    legendsY[i] = 0.92;
+  for(int i = 1; i < loadCells; i++) {
+    plot.getLayer(legends[i]).setPoints(dataPoints[i]);
   }
-  
+    
   plot.beginDraw();
   plot.drawBackground();
   plot.drawBox();
@@ -120,12 +124,13 @@ public void draw() {
   plot.drawTopAxis();
   plot.drawRightAxis();
   plot.drawTitle();
-  plot.drawLegend(legends, legendsX, legendsY);
-  plot.drawLabels();
   
-  for(int i = 1; i <= loadCells; i++) {
-    plot.getLayer("Load Cell " + str(i)).drawLines();
+  plot.drawLines();
+  for(int i = 1; i < loadCells; i++) {
+    plot.getLayer(legends[i]).drawLines();
   }
+  
+  plot.drawLegend(legends, legendsX, legendsY);
   
   plot.endDraw();
 
