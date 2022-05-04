@@ -49,7 +49,7 @@ public void setup() {
   dataPoints[0] = new GPointsArray(nPointsPlot);
   plot.setLineColor(color(random(255), random(255), random(255)));
 
-  for(int i = 1; i < loadCells; i++) {
+  for (int i = 1; i < loadCells; i++) {
     legends[i] = new String("Load Cell " + str(i + 1));
     legendsX[i] = legendsX[0] + i * 0.15;
     legendsY[i] = legendsY[0];
@@ -78,7 +78,16 @@ public void draw() {
       for (int i = 0; i < digits; i++) {
         char current = arduino.readChar();
         if (current == separator) {
-          buffer[i] = '\0';
+          for (int j = i; j < digits; j++) {
+            buffer[j] = '\0';
+          }
+          
+          for (int j = 0; j < i; j++) {
+            print(buffer[j]);
+          }
+          print(" " + new String(buffer));
+          println();
+          
           break;
         } else {
           buffer[i] = current;
@@ -139,6 +148,8 @@ public void draw() {
 float charToFloat(char[] input) {
   // Take in a character array and convert it to a float number that is returned
   String temp = new String(input);
+  //print(temp + " ");
   float x = float(temp);
+  //println(x);
   return x;
 }
