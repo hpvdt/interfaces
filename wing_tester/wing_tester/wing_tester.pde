@@ -3,10 +3,6 @@ import grafica.*;
 import g4p_controls.*;
 import processing.serial.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-
 Serial arduino; // used to communicate to the arduino
 int BAUDRATE = 9600;
 
