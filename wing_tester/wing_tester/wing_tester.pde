@@ -109,6 +109,13 @@ public void draw() {
         }
       }
       
+      if (buffer[digits - 1] != '\0') {
+        while (arduino.readChar() != separator) {
+          // get to the end of this data
+        }
+        buffer[digits - 1] = '\0';
+      }
+      
       raw[lc] = charToFloat(buffer);
       dataPoints[lc].add(frameCount, raw[lc]);
       if (frameCount > nPointsPlot) {

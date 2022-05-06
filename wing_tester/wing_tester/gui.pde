@@ -70,12 +70,12 @@ public void createGUI(){
   calibrate.setText("Calibrate");
   calibrate.addEventHandler(this, "button1_click1");
   export = new GButton(this, 620, 15, 80, 20);
-  export.setText("Export");
+  export.setText("Export Cal");
   export.addEventHandler(this, "button1_click2");
   load = new GButton(this, 530, 15, 80, 20);
-  load.setText("Load");
+  load.setText("Load Cal");
   load.addEventHandler(this, "button1_click3");
-  textarea1 = new GTextArea(this, 15, 380, 685, 80, G4P.SCROLLBARS_NONE);
+  textarea1 = new GTextArea(this, 15, 380, 690, 80, G4P.SCROLLBARS_NONE);
   textarea1.setOpaque(true);
   textarea1.addEventHandler(this, "textarea1_change1");
 }
