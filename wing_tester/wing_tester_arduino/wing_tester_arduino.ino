@@ -35,69 +35,69 @@ void loop() {
 #ifdef DEV_MODE
   // Development mode for interface testing
   // Just spits out numbers to be shown
-    Serial.print(i * 2);
-    Serial.print(separator);
-    Serial.print(i);
-    Serial.print(separator);
-    Serial.print(i / 2);
-    Serial.print(separator);
-    Serial.print(i / 3.0);
-    Serial.print(separator);
-    Serial.print(i % 10);
-    Serial.print(separator);
-    Serial.print(0);
-    i++;
+  Serial.print(i * 2);
+  Serial.print(separator);
+  Serial.print(i);
+  Serial.print(separator);
+  Serial.print(i / 2);
+  Serial.print(separator);
+  Serial.print(i / 3.0);
+  Serial.print(separator);
+  Serial.print(i % 10);
+  Serial.print(separator);
+  Serial.print(0);
+  i++;
 #else
   // Normal operation
   // Reads all possible values for the system
-    if (scale12.is_ready()) {
-      // with a gain factor of 32, channel B is selected
-      scale12.set_gain(32);
-      long reading1 = scale12.read();
-      Serial.print(reading1);
-      Serial.print(separator);
-  
-      // with a gain factor of 64 or 128, channel A is selected
-      scale12.set_gain(128);
-      long reading2 = scale12.read();
-      Serial.print(reading2);
-      Serial.print(separator);
-    } else {
-      Serial.print(separator);
-      Serial.print(separator);
-    }
-  
-    if (scale34.is_ready()) {
-      // with a gain factor of 32, channel B is selected
-      scale34.set_gain(32);
-      long reading3 = scale34.read();
-      Serial.print(reading3);
-      Serial.print(separator);
-  
-      // with a gain factor of 64 or 128, channel A is selected
-      scale34.set_gain(128);
-      long reading4 = scale34.read();
-      Serial.print(reading4);
-      Serial.print(separator);
-    } else {
-      Serial.print(separator);
-      Serial.print(separator);
-    }
-  
-    if (scale56.is_ready()) {
-      // with a gain factor of 32, channel B is selected
-      scale56.set_gain(32);
-      long reading5 = scale56.read();
-      Serial.print(reading5);
-      Serial.print(separator);
-  
-      // with a gain factor of 64 or 128, channel A is selected
-      scale56.set_gain(128);
-      long reading6 = scale56.read();
-      Serial.print(reading6);
-    } else {
-      Serial.print(separator);
-    }
+  if (scale12.is_ready()) {
+    // with a gain factor of 32, channel B is selected
+    scale12.set_gain(32);
+    long reading1 = scale12.read();
+    Serial.print(reading1);
+    Serial.print(separator);
+
+    // with a gain factor of 64 or 128, channel A is selected
+    scale12.set_gain(128);
+    long reading2 = scale12.read();
+    Serial.print(reading2);
+    Serial.print(separator);
+  } else {
+    Serial.print(separator);
+    Serial.print(separator);
+  }
+
+  if (scale34.is_ready()) {
+    // with a gain factor of 32, channel B is selected
+    scale34.set_gain(32);
+    long reading3 = scale34.read();
+    Serial.print(reading3);
+    Serial.print(separator);
+
+    // with a gain factor of 64 or 128, channel A is selected
+    scale34.set_gain(128);
+    long reading4 = scale34.read();
+    Serial.print(reading4);
+    Serial.print(separator);
+  } else {
+    Serial.print(separator);
+    Serial.print(separator);
+  }
+
+  if (scale56.is_ready()) {
+    // with a gain factor of 32, channel B is selected
+    scale56.set_gain(32);
+    long reading5 = scale56.read();
+    Serial.print(reading5);
+    Serial.print(separator);
+
+    // with a gain factor of 64 or 128, channel A is selected
+    scale56.set_gain(128);
+    long reading6 = scale56.read();
+    Serial.print(reading6);
+  } else {
+    Serial.print(separator);
+  }
 #endif
   
   Serial.print(ending);
