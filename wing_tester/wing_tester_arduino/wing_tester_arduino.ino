@@ -14,8 +14,13 @@ const char start = '[';
 const char ending[] = "]\n";
 const char separator = ';';
 
-bool dev = true;
-int i = 0; // for generating data in dev mode
+//#define DEV_MODE 
+// Used to toggle the dev mode, sending random numbers rather than reading actual values.
+// Uncomment it if you want to enter dev mode, leave commented out for normal operation.
+
+#ifdef DEV_MODE
+int i = 0; // Used for generating data in dev mode
+#endif
 
 void setup() {
   Serial.begin(9600);
@@ -27,7 +32,9 @@ void setup() {
 void loop() {
   Serial.print(start);
 
-  if (dev) {
+#ifdef DEV_MODE
+  // Development mode for interface testing
+  // Just spits out numbers to be shown
     Serial.print(i * 2);
     Serial.print(separator);
     Serial.print(i);
@@ -40,7 +47,9 @@ void loop() {
     Serial.print(separator);
     Serial.print(0);
     i++;
-  } else {
+#else
+  // Normal operation
+  // Reads all possible values for the system
     if (scale12.is_ready()) {
       // with a gain factor of 32, channel B is selected
       scale12.set_gain(32);
@@ -89,7 +98,7 @@ void loop() {
     } else {
       Serial.print(separator);
     }
-  }
+#endif
   
   Serial.print(ending);
   
