@@ -17,7 +17,7 @@ char[] buffer = new char[digits]; // buffer to read in data
 
 boolean recordData = true;
 Table table = new Table();
-String csvName = "data.csv";
+String csvName = "readings.csv";
 
 GPlot plot;
 int nPointsPlot = 300;
@@ -32,6 +32,10 @@ float[] scaling = new float[loadCells];
 float[] output = new float[loadCells];
 
 public void setup() {
+  size(720, 480, JAVA2D);
+  createGUI();
+  customGUI();
+  
   if (Serial.list().length == 0) {
     println("Can't connect to a port");
     System.exit(1);
@@ -39,8 +43,6 @@ public void setup() {
   
   String portName = Serial.list()[0];
   arduino = new Serial(this, portName, BAUDRATE);
-  
-  size(720, 480, JAVA2D);
   
   plot = new GPlot(this);
   plot.setPos(20, 60);
@@ -65,6 +67,8 @@ public void setup() {
     plot.addLayer(legends[i], dataPoints[i]);
     plot.getLayer(legends[i]).setLineColor(color(random(255), random(255), random(255)));
   }
+  
+  lcList.setItems(legends, 0);
   
   plot.activatePointLabels();
   
@@ -129,7 +133,7 @@ public void draw() {
     if (frameCount > nPointsPlot) {
       dataPoints[loadCells - 1].remove(0);
     }
-    
+        
     if (recordData) {
       TableRow newRow = table.addRow();
       
@@ -153,10 +157,7 @@ public void draw() {
   plot.beginDraw();
   plot.drawBackground();
   plot.drawBox();
-  plot.drawXAxis();
   plot.drawYAxis();
-  plot.drawTopAxis();
-  plot.drawRightAxis();
   plot.drawTitle();
   
   plot.drawLines();
@@ -167,6 +168,12 @@ public void draw() {
   plot.drawLegend(legends, legendsX, legendsY);
   
   plot.endDraw();
+}
+
+// Use this method to add additional statements
+// to customise the GUI controls
+public void customGUI() {
+  
 }
 
 float charToFloat(char[] input) {
