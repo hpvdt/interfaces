@@ -1,18 +1,18 @@
 #include "HX711.h"
-#define DOUT12  2
-#define CLK12   3
-#define DOUT34  4
-#define CLK34   5
-#define DOUT56  6
-#define CLK56   7
+const int DOUT12 = 2;
+const int CLK12 = 3;
+const int DOUT34 = 4;
+const int CLK34 = 5;
+const int DOUT56 = 6;
+const int CLK56 = 7;
 
 HX711 scale12;
 HX711 scale34;
 HX711 scale56;
 
-char start = '[';
-char ending[] = "]\n";
-char separator = ';';
+const char start = '[';
+const char ending[] = "]\n";
+const char separator = ';';
 
 bool dev = true;
 int i = 0; // for generating data in dev mode
