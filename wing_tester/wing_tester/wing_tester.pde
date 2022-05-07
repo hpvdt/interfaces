@@ -57,7 +57,11 @@ public void setup() {
   legendsX[0] = 0.07;
   legendsY[0] = 0.92;
   dataPoints[0] = new GPointsArray(nPointsPlot);
-  plot.setLineColor(color(random(255), random(255), random(255)));
+  
+  // Set colour
+  colorMode(HSB, 60, 100, 100); 
+  plot.setLineColor(color(0, 100, 100));
+  colorMode(RGB, 255, 255, 255);
 
   for (int i = 1; i < loadCells; i++) {
     legends[i] = new String("Load Cell " + (i + 1));
@@ -66,7 +70,11 @@ public void setup() {
     
     dataPoints[i] = new GPointsArray(nPointsPlot);
     plot.addLayer(legends[i], dataPoints[i]);
-    plot.getLayer(legends[i]).setLineColor(color(random(255), random(255), random(255)));
+    
+    // Switching the HSB colour to get colours evenly spaced through the colour spectrum
+    colorMode(HSB, 60, 100, 100);
+    plot.getLayer(legends[i]).setLineColor(color(i * 10, 100, 100));
+    colorMode(RGB, 255, 255, 255);
   }
   
   lcList.setItems(legends, 0);
