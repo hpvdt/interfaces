@@ -4,7 +4,7 @@ import g4p_controls.*;
 import processing.serial.*;
 
 Serial arduino; // used to communicate to the arduino
-int BAUDRATE = 9600;
+int BAUDRATE = 115200;
 
 char start = '[';
 char ending = ']';
@@ -99,6 +99,12 @@ public void draw() {
     
     for (int lc = 0; lc < loadCells - 1; lc++) {
       for (int i = 0; i < digits; i++) {
+      
+        while (arduino.available() == 0) {
+          // Wait for data to come in if we run out of characters
+          delay(10);
+        }
+        
         char current = arduino.readChar();
         if (current == separator) {
           for (int j = i; j < digits; j++) {
