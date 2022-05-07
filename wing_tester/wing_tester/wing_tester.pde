@@ -45,7 +45,7 @@ public void setup() {
   arduino = new Serial(this, portName, BAUDRATE);
   
   plot = new GPlot(this);
-  plot.setPos(20, 60);
+  plot.setPos(20, 50);
   plot.setMar(0, 60, 0, 0);
   plot.setDim(620, 300);
   plot.setAxesOffset(4);
@@ -140,6 +140,17 @@ public void draw() {
     if (frameCount > nPointsPlot) {
       dataPoints[loadCells - 1].remove(0);
     }
+    
+    String displayText = "";
+    
+    for (int i = 0; i < loadCells; i++) {
+      output[i] = (raw[i] - zero[i]) / scaling[i];
+      displayText += legends[i] + "   Raw " + nfs(raw[i], 5, 2) 
+                                + "   Zero " + nfs(zero[i], 2, 1) 
+                                + "   Scaling " + nfs(scaling[i], 2, 1)
+                                + "   Final " + nfs(output[i], 5, 2) + "\n";
+      readings.setText(displayText);
+    }
         
     if (recordData) {
       TableRow newRow = table.addRow();
@@ -148,7 +159,7 @@ public void draw() {
         newRow.setFloat("Raw LC" + (i + 1), raw[i]);
         newRow.setFloat("Zero LC" + (i + 1), zero[i]);
         newRow.setFloat("Scaling LC" + (i + 1), scaling[i]);
-        newRow.setFloat("Final LC" + (i + 1), raw[i]);
+        newRow.setFloat("Final LC" + (i + 1), output[i]);
       }
       
       saveTable(table, csvName);

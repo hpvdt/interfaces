@@ -38,9 +38,9 @@ public void button1_click3(GButton source, GEvent event) { //_CODE_:load:866453:
   println("load - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:load:866453:
 
-public void textarea1_change1(GTextArea source, GEvent event) { //_CODE_:textarea1:231265:
+public void textarea1_change1(GTextArea source, GEvent event) { //_CODE_:readings:231265:
   println("textarea1 - GTextArea >> GEvent." + event + " @ " + millis());
-} //_CODE_:textarea1:231265:
+} //_CODE_:readings:231265:
 
 
 
@@ -75,9 +75,9 @@ public void createGUI(){
   load = new GButton(this, 530, 15, 80, 20);
   load.setText("Load Cal");
   load.addEventHandler(this, "button1_click3");
-  textarea1 = new GTextArea(this, 15, 380, 690, 80, G4P.SCROLLBARS_NONE);
-  textarea1.setOpaque(true);
-  textarea1.addEventHandler(this, "textarea1_change1");
+  readings = new GTextArea(this, 15, 360, 690, 100, G4P.SCROLLBARS_NONE);
+  readings.setOpaque(true);
+  readings.addEventHandler(this, "textarea1_change1");
 }
 
 // Variable declarations 
@@ -90,4 +90,4 @@ GTextField scaleInput;
 GButton calibrate; 
 GButton export; 
 GButton load; 
-GTextArea textarea1; 
+GTextArea readings; 
