@@ -57,7 +57,34 @@ public void export_click(GButton source, GEvent event) { //_CODE_:export:477455:
 } //_CODE_:export:477455:
 
 public void load_click(GButton source, GEvent event) { //_CODE_:load:866453:
-  println("load - GButton >> GEvent." + event + " @ " + millis());
+  String fname = G4P.selectInput("Select File");
+  try {
+    Table table = loadTable(fname, "header");
+    if (table.getRowCount() != loadCells) {
+      G4P.showMessage(this, "Calibration file does not have " + loadCells + " rows (excluding header)", 
+                      "Error", G4P.ERROR_MESSAGE);
+      return;
+    }
+    for (int i = 0; i < loadCells; i++) {
+      TableRow row = table.getRow(i);
+      
+      String name = row.getString("LC");
+      if (!name.equals(legends[i])) {
+        G4P.showMessage(this, "Cannot match load cell: " + name, 
+                        "Error", G4P.ERROR_MESSAGE);
+        return;
+      }
+      
+      zero[i] = row.getFloat("Zero");
+      scaling[i] = row.getFloat("Scaling");
+    }
+    
+    G4P.showMessage(this, "Calibration file loaded!", 
+                    "Load Calibration File", G4P.INFO_MESSAGE);
+  } catch (Exception e) {
+    G4P.showMessage(this, "Unable to load calibration file", 
+                    "Error", G4P.ERROR_MESSAGE);
+  }
 } //_CODE_:load:866453:
 
 public void textarea1_change1(GTextArea source, GEvent event) { //_CODE_:readings:231265:
