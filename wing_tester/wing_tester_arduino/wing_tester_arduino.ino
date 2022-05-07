@@ -23,7 +23,7 @@ int i = 0; // Used for generating data in dev mode
 #endif
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   scale12.begin(DOUT12, CLK12);
   scale34.begin(DOUT34, CLK34);
   scale56.begin(DOUT56, CLK56);
