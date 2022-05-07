@@ -145,10 +145,10 @@ public void draw() {
     
     for (int i = 0; i < loadCells; i++) {
       output[i] = (raw[i] - zero[i]) / scaling[i];
-      displayText += legends[i] + "   Raw " + nfs(raw[i], 5, 2) 
-                                + "   Zero " + nfs(zero[i], 2, 1) 
-                                + "   Scaling " + nfs(scaling[i], 2, 1)
-                                + "   Final " + nfs(output[i], 5, 2) + "\n";
+      displayText += legends[i] + ":   Raw " + nfs(raw[i], 5, 2) 
+                                + "    Zero " + nfs(zero[i], 2, 1) 
+                                + "    Scaling " + nfs(scaling[i], 2, 1)
+                                + "    Final " + nfs(output[i], 5, 2) + "\n";
       readings.setText(displayText);
     }
         
@@ -191,7 +191,8 @@ public void draw() {
 // Use this method to add additional statements
 // to customise the GUI controls
 public void customGUI() {
-  
+  zeroInput.setNumericType(G4P.DECIMAL);
+  scaleInput.setNumericType(G4P.DECIMAL);
 }
 
 float charToFloat(char[] input) {

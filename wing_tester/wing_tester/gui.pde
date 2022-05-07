@@ -14,8 +14,10 @@
  * =========================================================
  */
 
-public void dropList1_click1(GDropList source, GEvent event) { //_CODE_:lcList:910021:
-  println("dropList1 - GDropList >> GEvent." + event + " @ " + millis());
+public void lcList_click(GDropList source, GEvent event) { //_CODE_:lcList:910021:
+  int index = source.getSelectedIndex();
+  zeroInput.setText(nf(zero[index]));
+  scaleInput.setText(nf(scaling[index]));
 } //_CODE_:lcList:910021:
 
 public void textfield1_change1(GTextField source, GEvent event) { //_CODE_:zeroInput:673497:
@@ -26,15 +28,17 @@ public void textfield1_change2(GTextField source, GEvent event) { //_CODE_:scale
   println("textfield1 - GTextField >> GEvent." + event + " @ " + millis());
 } //_CODE_:scaleInput:452314:
 
-public void button1_click1(GButton source, GEvent event) { //_CODE_:calibrate:272350:
-  println("calibrate - GButton >> GEvent." + event + " @ " + millis());
+public void calibrate_click(GButton source, GEvent event) { //_CODE_:calibrate:272350:
+  int index = lcList.getSelectedIndex();
+  zero[index] = zeroInput.getValueF();
+  scaling[index] = scaleInput.getValueF();
 } //_CODE_:calibrate:272350:
 
-public void button1_click2(GButton source, GEvent event) { //_CODE_:export:477455:
+public void export_click(GButton source, GEvent event) { //_CODE_:export:477455:
   println("export - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:export:477455:
 
-public void button1_click3(GButton source, GEvent event) { //_CODE_:load:866453:
+public void load_click(GButton source, GEvent event) { //_CODE_:load:866453:
   println("load - GButton >> GEvent." + event + " @ " + millis());
 } //_CODE_:load:866453:
 
@@ -53,7 +57,7 @@ public void createGUI(){
   surface.setTitle("Sketch Window");
   lcList = new GDropList(this, 20, 15, 90, 80, 3, 10);
   lcList.setItems(loadStrings("list_910021"), 0);
-  lcList.addEventHandler(this, "dropList1_click1");
+  lcList.addEventHandler(this, "lcList_click");
   label2 = new GLabel(this, 120, 15, 60, 20);
   label2.setText("Zero");
   label2.setOpaque(false);
@@ -68,13 +72,13 @@ public void createGUI(){
   scaleInput.addEventHandler(this, "textfield1_change2");
   calibrate = new GButton(this, 440, 15, 80, 20);
   calibrate.setText("Calibrate");
-  calibrate.addEventHandler(this, "button1_click1");
+  calibrate.addEventHandler(this, "calibrate_click");
   export = new GButton(this, 620, 15, 80, 20);
   export.setText("Export Cal");
-  export.addEventHandler(this, "button1_click2");
+  export.addEventHandler(this, "export_click");
   load = new GButton(this, 530, 15, 80, 20);
   load.setText("Load Cal");
-  load.addEventHandler(this, "button1_click3");
+  load.addEventHandler(this, "load_click");
   readings = new GTextArea(this, 15, 360, 690, 100, G4P.SCROLLBARS_NONE);
   readings.setOpaque(true);
   readings.addEventHandler(this, "textarea1_change1");
