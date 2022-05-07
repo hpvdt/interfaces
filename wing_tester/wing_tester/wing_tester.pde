@@ -18,6 +18,7 @@ char[] buffer = new char[digits]; // buffer to read in data
 boolean recordData = true;
 Table table = new Table();
 String csvName = "readings.csv";
+String calName = "calibration.csv";
 
 GPlot plot;
 int nPointsPlot = 300;
@@ -162,7 +163,11 @@ public void draw() {
         newRow.setFloat("Final LC" + (i + 1), output[i]);
       }
       
-      saveTable(table, csvName);
+      try {
+        saveTable(table, csvName);
+      } catch (Exception e) {
+        println("Error saving data to " + csvName);
+      }
     }
   }
   

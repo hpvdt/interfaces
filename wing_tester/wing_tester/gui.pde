@@ -21,11 +21,11 @@ public void lcList_click(GDropList source, GEvent event) { //_CODE_:lcList:91002
 } //_CODE_:lcList:910021:
 
 public void textfield1_change1(GTextField source, GEvent event) { //_CODE_:zeroInput:673497:
-  println("textfield1 - GTextField >> GEvent." + event + " @ " + millis());
+  //println("textfield1 - GTextField >> GEvent." + event + " @ " + millis());
 } //_CODE_:zeroInput:673497:
 
 public void textfield1_change2(GTextField source, GEvent event) { //_CODE_:scaleInput:452314:
-  println("textfield1 - GTextField >> GEvent." + event + " @ " + millis());
+  //println("textfield1 - GTextField >> GEvent." + event + " @ " + millis());
 } //_CODE_:scaleInput:452314:
 
 public void calibrate_click(GButton source, GEvent event) { //_CODE_:calibrate:272350:
@@ -35,7 +35,25 @@ public void calibrate_click(GButton source, GEvent event) { //_CODE_:calibrate:2
 } //_CODE_:calibrate:272350:
 
 public void export_click(GButton source, GEvent event) { //_CODE_:export:477455:
-  println("export - GButton >> GEvent." + event + " @ " + millis());
+  Table calTable = new Table();
+  calTable.addColumn("LC");
+  calTable.addColumn("Zero");
+  calTable.addColumn("Scaling");
+  for (int i = 0; i < loadCells; i++) {
+      TableRow newRow = calTable.addRow();
+      newRow.setString("LC", legends[i]);
+      newRow.setFloat("Zero", zero[i]);
+      newRow.setFloat("Scaling", scaling[i]);
+  }
+  
+  try {
+    saveTable(calTable, calName);
+    G4P.showMessage(this, "Calibration file exported as " + calName, 
+                    "Export Calibration", G4P.INFO_MESSAGE);
+  } catch (Exception e) {
+    G4P.showMessage(this, "Unable to export calibration file", 
+                    "Error", G4P.ERROR_MESSAGE);
+  }
 } //_CODE_:export:477455:
 
 public void load_click(GButton source, GEvent event) { //_CODE_:load:866453:
