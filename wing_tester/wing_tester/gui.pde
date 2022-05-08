@@ -46,9 +46,10 @@ public void export_click(GButton source, GEvent event) { //_CODE_:export:477455:
       newRow.setFloat("Scaling", scaling[i]);
   }
   
+  String calFName = calName + "-" + getDateTime() + ".csv";
   try {
-    saveTable(calTable, calName);
-    G4P.showMessage(this, "Calibration file exported as " + calName, 
+    saveTable(calTable, calFName);
+    G4P.showMessage(this, "Calibration file exported as " + calFName, 
                     "Export Calibration", G4P.INFO_MESSAGE);
   } catch (Exception e) {
     G4P.showMessage(this, "Unable to export calibration file", 

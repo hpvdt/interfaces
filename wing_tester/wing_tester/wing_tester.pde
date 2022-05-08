@@ -17,8 +17,8 @@ char[] buffer = new char[digits]; // buffer to read in data
 
 boolean recordData = true;
 Table table = new Table();
-String csvName = "readings.csv";
-String calName = "calibration.csv";
+String csvName = "data/readings";
+String calName = "data/calibration";
 
 GPlot plot;
 int nPointsPlot = 300;
@@ -82,6 +82,7 @@ public void setup() {
   plot.activatePointLabels();
   
   if (recordData) {
+    csvName += "-" + getDateTime() + ".csv";
     for (int i = 1; i <= loadCells; i++) {
       table.addColumn("Raw LC" + i);
       table.addColumn("Zero LC" + i);
@@ -212,6 +213,11 @@ public void draw() {
 public void customGUI() {
   zeroInput.setNumericType(G4P.DECIMAL);
   scaleInput.setNumericType(G4P.DECIMAL);
+}
+
+String getDateTime() {
+  return String.valueOf(year()) + String.valueOf(month()) + String.valueOf(day()) + "-" 
+       + String.valueOf(hour()) + String.valueOf(minute()) + String.valueOf(second());
 }
 
 float charToFloat(char[] input) {
