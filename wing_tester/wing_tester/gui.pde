@@ -59,6 +59,11 @@ public void export_click(GButton source, GEvent event) { //_CODE_:export:477455:
 
 public void load_click(GButton source, GEvent event) { //_CODE_:load:866453:
   String fname = G4P.selectInput("Select File");
+  
+  if (fname == null) {
+    return;
+  }
+  
   try {
     Table table = loadTable(fname, "header");
     if (table.getRowCount() != loadCells) {
