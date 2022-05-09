@@ -113,7 +113,6 @@ public void draw() {
     
     for (int lc = 0; lc < loadCells - 1; lc++) {
       for (int i = 0; i < digits; i++) {
-      
         while (arduino.available() == 0) {
           // Wait for data to come in if we run out of characters
           delay(10);
@@ -149,7 +148,9 @@ public void draw() {
       char current = arduino.readChar();
       if (current == ending) {
         arduino.readChar(); // newline
-        buffer[i] = '\0';
+        for (int j = i; j < digits; j++) {
+          buffer[j] = '\0';
+        }
         break;
       } else {
         buffer[i] = current;

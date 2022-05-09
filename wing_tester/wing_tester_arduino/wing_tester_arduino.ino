@@ -14,6 +14,8 @@ const char start = '[';
 const char ending[] = "]\n";
 const char separator = ';';
 
+long readings[6];
+
 //#define DEV_MODE 
 // Used to toggle the dev mode, sending random numbers rather than reading actual values.
 // Uncomment it if you want to enter dev mode, leave commented out for normal operation.
@@ -30,11 +32,10 @@ void setup() {
 }
 
 void loop() {
-  Serial.print(start);
-
 #ifdef DEV_MODE
   // Development mode for interface testing
   // Just spits out numbers to be shown
+  Serial.print(start);
   Serial.print(i * 2);
   Serial.print(separator);
   Serial.print(i);
@@ -46,6 +47,7 @@ void loop() {
   Serial.print(i % 10);
   Serial.print(separator);
   Serial.print(0);
+  Serial.print(ending);
   i++;
 #else
   /* Normal operation
@@ -68,60 +70,59 @@ void loop() {
   if (scale12.is_ready()) {
     // With a gain factor of 64 or 128, channel A is selected for the next read
     scale12.set_gain(128); 
-    long reading1 = scale12.read();
-    Serial.print(reading1);
-    Serial.print(separator);
+    readings[0] = scale12.read();
 
     scale12.wait_ready(1); // Wait in 1ms increments until ready to read
 
     // With a gain factor of 32, channel B is selected for the next read
     scale12.set_gain(32); 
-    long reading2 = scale12.read();
-    Serial.print(reading2);
-    Serial.print(separator);
+    readings[1] = scale12.read();
   } else {
-    Serial.print(separator);
-    Serial.print(separator);
+    readings[0] = 0;
+    readings[1] = 0;
   }
 
   if (scale34.is_ready()) {
     // With a gain factor of 64 or 128, channel A is selected for the next read
     scale34.set_gain(128);
-    long reading3 = scale34.read();
-    Serial.print(reading3);
-    Serial.print(separator);
+    readings[2] = scale34.read();
 
     scale34.wait_ready(1); // Wait in 1ms increments until ready to read
 
     // With a gain factor of 32, channel B is selected for the next read
     scale34.set_gain(32);
-    long reading4 = scale34.read();
-    Serial.print(reading4);
-    Serial.print(separator);
+    readings[3] = scale34.read();
   } else {
-    Serial.print(separator);
-    Serial.print(separator);
+    readings[2] = 0;
+    readings[3] = 0;
   }
 
   if (scale56.is_ready()) {
     // With a gain factor of 64 or 128, channel A is selected for the next read
     scale56.set_gain(128);
-    long reading5 = scale56.read();
-    Serial.print(reading5);
-    Serial.print(separator);
+    readings[4] = scale56.read();
 
     scale56.wait_ready(1); // Wait in 1ms increments until ready to read
 
     // With a gain factor of 32, channel B is selected for the next read
     scale56.set_gain(32);
-    long reading6 = scale56.read();
-    Serial.print(reading6);
+    readings[5] = scale56.read();
   } else {
-    Serial.print(separator);
+    readings[4] = 0;
+    readings[5] = 0;
   }
+
+  String data = "";
+  data.concat(start);
+  for (int i = 0; i < 5; i++) {
+    data.concat(readings[i]);
+    data.concat(separator);
+  }
+  data.concat(readings[5]);
+  data.concat(ending);
+
+  Serial.print(data);
 #endif
-  
-  Serial.print(ending);
   
   delay(100);
 }
