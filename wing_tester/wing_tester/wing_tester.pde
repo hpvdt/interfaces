@@ -216,8 +216,7 @@ public void customGUI() {
 }
 
 String getDateTime() {
-  return String.valueOf(year()) + String.valueOf(month()) + String.valueOf(day()) + "-" 
-       + String.valueOf(hour()) + String.valueOf(minute()) + String.valueOf(second());
+  return String.format("%4d%02d%02d-%02d%02d%02d", year(), month(), day(), hour(), minute(), second());
 }
 
 float charToFloat(char[] input) {
