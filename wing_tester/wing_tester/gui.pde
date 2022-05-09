@@ -94,11 +94,11 @@ public void load_click(GButton source, GEvent event) { //_CODE_:load:866453:
 } //_CODE_:load:866453:
 
 public void textarea1_change1(GTextArea source, GEvent event) { //_CODE_:readings:231265:
-  println("textarea1 - GTextArea >> GEvent." + event + " @ " + millis());
+  //println("textarea1 - GTextArea >> GEvent." + event + " @ " + millis());
 } //_CODE_:readings:231265:
 
 public void ports_click(GDropList source, GEvent event) { //_CODE_:ports:720618:
-  println("dropList1 - GDropList >> GEvent." + event + " @ " + millis());
+  //println("dropList1 - GDropList >> GEvent." + event + " @ " + millis());
 } //_CODE_:ports:720618:
 
 public void changePort_click(GButton source, GEvent event) { //_CODE_:changePort:570934:

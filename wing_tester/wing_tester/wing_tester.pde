@@ -38,9 +38,11 @@ public void setup() {
   size(720, 480, JAVA2D);
   createGUI();
   customGUI();
+  surface.setTitle("HPVDT Load Cell Reader");
   
   if (Serial.list().length == 0) {
-    println("Can't connect to a port");
+    G4P.showMessage(this, "No available port to connect to", "Error", G4P.ERROR_MESSAGE);
+    //println("Can't connect to a port");
     System.exit(1);
   }
   
