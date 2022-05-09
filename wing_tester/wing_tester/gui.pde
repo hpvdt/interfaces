@@ -101,13 +101,21 @@ public void ports_click(GDropList source, GEvent event) { //_CODE_:ports:720618:
   println("dropList1 - GDropList >> GEvent." + event + " @ " + millis());
 } //_CODE_:ports:720618:
 
-public void button1_click1(GButton source, GEvent event) { //_CODE_:button1:570934:
-  println("button1 - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:button1:570934:
+public void changePort_click(GButton source, GEvent event) { //_CODE_:changePort:570934:
+  String selected = ports.getSelectedText();
+  try {
+    arduino = new Serial(this, selected, BAUDRATE);
+  } catch (Exception e) {
+    G4P.showMessage(this, "Unable to connect to " + selected, 
+                    "Error", G4P.ERROR_MESSAGE);
+  }
+} //_CODE_:changePort:570934:
 
-public void button2_click1(GButton source, GEvent event) { //_CODE_:button2:307138:
-  println("button2 - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:button2:307138:
+public void clear_click(GButton source, GEvent event) { //_CODE_:clear:307138:
+  for (int i = 0; i < loadCells; i++) {
+    dataPoints[i] = new GPointsArray();
+  }
+} //_CODE_:clear:307138:
 
 
 
@@ -148,12 +156,12 @@ public void createGUI(){
   ports = new GDropList(this, 610, 365, 90, 80, 3, 10);
   ports.setItems(loadStrings("list_720618"), 0);
   ports.addEventHandler(this, "ports_click");
-  button1 = new GButton(this, 610, 400, 90, 20);
-  button1.setText("Change port");
-  button1.addEventHandler(this, "button1_click1");
-  button2 = new GButton(this, 610, 435, 90, 20);
-  button2.setText("Clear graph");
-  button2.addEventHandler(this, "button2_click1");
+  changePort = new GButton(this, 610, 400, 90, 20);
+  changePort.setText("Change port");
+  changePort.addEventHandler(this, "changePort_click");
+  clear = new GButton(this, 610, 435, 90, 20);
+  clear.setText("Clear graph");
+  clear.addEventHandler(this, "clear_click");
 }
 
 // Variable declarations 
@@ -168,5 +176,5 @@ GButton export;
 GButton load; 
 GTextArea readings; 
 GDropList ports; 
-GButton button1; 
-GButton button2; 
+GButton changePort; 
+GButton clear; 

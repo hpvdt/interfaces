@@ -32,6 +32,8 @@ float[] zero = new float[loadCells];
 float[] scaling = new float[loadCells];
 float[] output = new float[loadCells];
 
+int x = 0;
+
 public void setup() {
   size(720, 480, JAVA2D);
   createGUI();
@@ -44,8 +46,7 @@ public void setup() {
   
   ports.setItems(Serial.list(), 0);
   
-  String portName = Serial.list()[0];
-  arduino = new Serial(this, portName, BAUDRATE);
+  arduino = new Serial(this, Serial.list()[0], BAUDRATE);
   
   plot = new GPlot(this);
   plot.setPos(20, 50);
@@ -58,7 +59,7 @@ public void setup() {
   legends[0] = new String("Load Cell 1");
   legendsX[0] = 0.07;
   legendsY[0] = 0.92;
-  dataPoints[0] = new GPointsArray(nPointsPlot);
+  dataPoints[0] = new GPointsArray();
   
   // Set colour
   colorMode(HSB, 60, 100, 100); 
@@ -70,7 +71,7 @@ public void setup() {
     legendsX[i] = legendsX[0] + i * 0.15;
     legendsY[i] = legendsY[0];
     
-    dataPoints[i] = new GPointsArray(nPointsPlot);
+    dataPoints[i] = new GPointsArray();
     plot.addLayer(legends[i], dataPoints[i]);
     
     // Switching the HSB colour to get colours evenly spaced through the colour spectrum
@@ -135,8 +136,8 @@ public void draw() {
       }
       
       raw[lc] = charToFloat(buffer);
-      dataPoints[lc].add(frameCount, raw[lc]);
-      if (frameCount > nPointsPlot) {
+      dataPoints[lc].add(x, raw[lc]);
+      if (dataPoints[lc].getNPoints() > nPointsPlot) {
         dataPoints[lc].remove(0);
       }
     }
@@ -154,10 +155,12 @@ public void draw() {
     }
     
     raw[loadCells - 1] = charToFloat(buffer);
-    dataPoints[loadCells - 1].add(frameCount, raw[loadCells - 1]);
-    if (frameCount > nPointsPlot) {
+    dataPoints[loadCells - 1].add(x, raw[loadCells - 1]);
+    if (dataPoints[loadCells - 1].getNPoints() > nPointsPlot) {
       dataPoints[loadCells - 1].remove(0);
     }
+    
+    x++;
     
     String displayText = "";
     
