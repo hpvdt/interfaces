@@ -97,6 +97,18 @@ public void textarea1_change1(GTextArea source, GEvent event) { //_CODE_:reading
   println("textarea1 - GTextArea >> GEvent." + event + " @ " + millis());
 } //_CODE_:readings:231265:
 
+public void ports_click(GDropList source, GEvent event) { //_CODE_:ports:720618:
+  println("dropList1 - GDropList >> GEvent." + event + " @ " + millis());
+} //_CODE_:ports:720618:
+
+public void button1_click1(GButton source, GEvent event) { //_CODE_:button1:570934:
+  println("button1 - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:button1:570934:
+
+public void button2_click1(GButton source, GEvent event) { //_CODE_:button2:307138:
+  println("button2 - GButton >> GEvent." + event + " @ " + millis());
+} //_CODE_:button2:307138:
+
 
 
 // Create all the GUI controls. 
@@ -130,9 +142,18 @@ public void createGUI(){
   load = new GButton(this, 530, 15, 80, 20);
   load.setText("Load Cal");
   load.addEventHandler(this, "load_click");
-  readings = new GTextArea(this, 15, 360, 690, 100, G4P.SCROLLBARS_NONE);
+  readings = new GTextArea(this, 15, 360, 580, 100, G4P.SCROLLBARS_NONE);
   readings.setOpaque(true);
   readings.addEventHandler(this, "textarea1_change1");
+  ports = new GDropList(this, 610, 365, 90, 80, 3, 10);
+  ports.setItems(loadStrings("list_720618"), 0);
+  ports.addEventHandler(this, "ports_click");
+  button1 = new GButton(this, 610, 400, 90, 20);
+  button1.setText("Change port");
+  button1.addEventHandler(this, "button1_click1");
+  button2 = new GButton(this, 610, 435, 90, 20);
+  button2.setText("Clear graph");
+  button2.addEventHandler(this, "button2_click1");
 }
 
 // Variable declarations 
@@ -146,3 +167,6 @@ GButton calibrate;
 GButton export; 
 GButton load; 
 GTextArea readings; 
+GDropList ports; 
+GButton button1; 
+GButton button2; 

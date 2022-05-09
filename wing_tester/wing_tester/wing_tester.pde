@@ -42,6 +42,8 @@ public void setup() {
     System.exit(1);
   }
   
+  ports.setItems(Serial.list(), 0);
+  
   String portName = Serial.list()[0];
   arduino = new Serial(this, portName, BAUDRATE);
   
