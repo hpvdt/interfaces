@@ -129,16 +129,16 @@ public void createGUI(){
   lcList = new GDropList(this, 20, 15, 90, 80, 3, 10);
   lcList.setItems(loadStrings("list_910021"), 0);
   lcList.addEventHandler(this, "lcList_click");
-  label2 = new GLabel(this, 120, 15, 60, 20);
+  label2 = new GLabel(this, 120, 15, 40, 20);
   label2.setText("Zero");
   label2.setOpaque(false);
-  zeroInput = new GTextField(this, 150, 15, 120, 20, G4P.SCROLLBARS_NONE);
+  zeroInput = new GTextField(this, 155, 15, 110, 20, G4P.SCROLLBARS_NONE);
   zeroInput.setOpaque(true);
   zeroInput.addEventHandler(this, "textfield1_change1");
-  label3 = new GLabel(this, 270, 14, 60, 20);
+  label3 = new GLabel(this, 275, 14, 40, 20);
   label3.setText("Scale");
   label3.setOpaque(false);
-  scaleInput = new GTextField(this, 310, 15, 120, 20, G4P.SCROLLBARS_NONE);
+  scaleInput = new GTextField(this, 315, 15, 110, 20, G4P.SCROLLBARS_NONE);
   scaleInput.setOpaque(true);
   scaleInput.addEventHandler(this, "textfield1_change2");
   calibrate = new GButton(this, 440, 15, 80, 20);
@@ -150,17 +150,17 @@ public void createGUI(){
   load = new GButton(this, 530, 15, 80, 20);
   load.setText("Load Cal");
   load.addEventHandler(this, "load_click");
-  readings = new GTextArea(this, 15, 360, 580, 100, G4P.SCROLLBARS_NONE);
+  readings = new GTextArea(this, 15, 360, 560, 100, G4P.SCROLLBARS_NONE);
   readings.setOpaque(true);
   readings.addEventHandler(this, "textarea1_change1");
-  ports = new GDropList(this, 610, 365, 90, 80, 3, 10);
+  ports = new GDropList(this, 590, 365, 110, 80, 3, 10);
   ports.setItems(loadStrings("list_720618"), 0);
   ports.addEventHandler(this, "ports_click");
-  changePort = new GButton(this, 610, 400, 90, 20);
-  changePort.setText("Change port");
+  changePort = new GButton(this, 590, 400, 110, 20);
+  changePort.setText("Change Port");
   changePort.addEventHandler(this, "changePort_click");
-  clear = new GButton(this, 610, 435, 90, 20);
-  clear.setText("Clear graph");
+  clear = new GButton(this, 590, 435, 110, 20);
+  clear.setText("Clear Graph");
   clear.addEventHandler(this, "clear_click");
 }
 
