@@ -145,6 +145,11 @@ public void draw() {
     
     // for the last load cell reading
     for (int i = 0; i < digits; i++) {
+      while (arduino.available() == 0) {
+        // Wait for data to come in if we run out of characters
+        delay(10);
+      }
+      
       char current = arduino.readChar();
       if (current == ending) {
         arduino.readChar(); // newline
@@ -169,10 +174,10 @@ public void draw() {
     
     for (int i = 0; i < loadCells; i++) {
       output[i] = (raw[i] - zero[i]) / scaling[i];
-      displayText += legends[i] + ":   Raw " + nfs(raw[i], 5, 2) 
+      displayText += legends[i] + ":   Raw " + nfs(raw[i], 6, 2) 
                                 + "    Zero " + nfs(zero[i], 2, 1) 
                                 + "    Scaling " + nfs(scaling[i], 2, 1)
-                                + "    Final " + nfs(output[i], 5, 2) + "\n";
+                                + "    Final " + nfs(output[i], 6, 2) + "\n";
       readings.setText(displayText);
     }
         
