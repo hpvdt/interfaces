@@ -1,34 +1,38 @@
-/* Gets in a value for which line to process, then processes it.
- Requests characters are lowercase, setting is uppercase
- 
- *a - Heart rate (front) (BPM)
- b - Heart rate (rear) (BPM)
- *c - Cadence (front) (RPM)
- d - Cadence (rear) (RPM)
- *e - Power (front) (W)
- f - Power (rear) (W)
- 
- *i - Front battery %
- j - Rear battery %
- k - Backup system battery %
- 
- *h - Humidity (R.H.%)
- *t - Temperature (C * 2 + 50)
- 
- *s - Speed (km/h)
- *q - Distance (number of rotations)
- 
- l - Latitude (degrees)
- m - Longitude (degrees)
- n - Altitude (m)
- o - GPS speed (km/h)
- p - GPS distance (km)
- u - Starting longitude
- v - Starting latitude
- 
- y - Testing byte
- z - Testing byte
- */
+  /* Gets in a value for which line to process, then processes it.
+  Requests characters are lowercase, setting is uppercase
+
+  a - Heart rate (front) (BPM)
+  b - Heart rate (rear) (BPM)
+  c - Cadence (front) (RPM)
+  d - Cadence (rear) (RPM)
+  e - Power (front) (W)
+  f - Power (rear) (W)
+  g - All ANT data (delimited, in order a-f)
+
+  i - Front battery %
+  j - Rear battery %
+
+  h - Humidity (R.H.%)
+  t - Temperature (C * 2 + 50)
+  k - CO2 (ppm)
+
+  s - Speed (km/h)
+  q - Distance (number of rotations)
+
+  l - Latitude (degrees)
+  m - Longitude (degrees)
+  n - Altitude (m)
+  o - GPS speed (km/h)
+  p - GPS distance (km)
+  u - Starting longitude
+  v - Starting latitude
+
+  w - Front brake temperature (C)
+  x - Rear brake temperature (C)
+
+  y - Testing byte
+  z - Testing byte
+  */
 
 class comms {
   Serial line = null;
