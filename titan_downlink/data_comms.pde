@@ -47,7 +47,6 @@ class comms {
   }
    
    String requestDataTwice(char type) {
-     
      requestData(type);
      return requestData(type);
    }
@@ -55,10 +54,20 @@ class comms {
     line.clear(); // Clears lines of anything that came before
     
     line.write(type); // Sends request
-
-    //print("Requesting data: ");
-    //println(type);
-    //delay(5);
+    
+    /*
+    print("Requesting data: ");
+    println(type);
+    delay(50);
+    
+    print("Recieved: ");
+    while (line.available() > 0) {
+      print(char(line.read()));
+    }
+    println("");
+    
+    return "0";
+    */
     
     // Waits and get the data length
     int endTime = millis() + timeout; // Used to mark when to timeout
@@ -83,6 +92,7 @@ class comms {
     }
     
     if (line.available() == 0) return "";
+    
     String output = new String (char(line.readBytes(lengthData))); // Read in data
     
     //print("Recieved message of length: ");

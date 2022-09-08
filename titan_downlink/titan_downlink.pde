@@ -131,7 +131,6 @@ public void draw() {
 
       batt1 = int(bike.requestDataTwice('i'));
       batt2 = int(bike.requestDataTwice('j'));
-      batt3 = int(bike.requestDataTwice('k'));
       
       c02 = int(bike.requestDataTwice('k'));
       brakeFront = int(bike.requestDataTwice('w'));
@@ -184,7 +183,6 @@ public void draw() {
     // Update the labels
     batt1Lbl.setText(str(batt1));
     batt2Lbl.setText(str(batt2));
-    batt3Lbl.setText(str(batt3));
     c02Lbl.setText(str(c02));
     distLbl.setText(str(distance));
     speedLbl.setText(str(speed));
