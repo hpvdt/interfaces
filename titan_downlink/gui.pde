@@ -16,7 +16,8 @@
 
 public void exitBtn_click(GButton source, GEvent event) { //_CODE_:exitBtn:797162:
   //println("exitBtn - GButton >> GEvent." + event + " @ " + millis());
-  bike.endComms();
+  
+  endComms();
   exit();
 } //_CODE_:exitBtn:797162:
 
@@ -29,7 +30,7 @@ public void serialSelectClick(GDropList source, GEvent event) { //_CODE_:serialS
 public void runButtonClick(GButton source, GEvent event) { //_CODE_:runButton:452403:
   if (requestData == false) {
     // Start sending data because we weren't
-    bike.line = new Serial(this, serialSelect.getSelectedText(), BAUDRATE);
+    telemetryLine = new Serial(this, serialSelect.getSelectedText(), BAUDRATE);
     requestData = true;
     serialSelect.setEnabled(false); //Disable the serial selector
     runButton.setText("STOP");
@@ -38,8 +39,7 @@ public void runButtonClick(GButton source, GEvent event) { //_CODE_:runButton:45
   }
   else {
     // Stop sending data, free serial line
-    requestData = false;
-    bike.endComms();
+    endComms();
     serialSelect.setEnabled(true); //Disable the serial selector
     runButton.setText("Start");
     runButton.setLocalColorScheme(runButton.GREEN_SCHEME);

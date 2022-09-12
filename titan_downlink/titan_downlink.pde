@@ -11,7 +11,7 @@ java.awt.Font bigLabels = new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 30
 
 // Communication related stuff
 import processing.serial.*;
-comms bike = new comms(); // Used to communicate to and from the bike
+Serial telemetryLine; // Used to communicate to and from the bike
 int BAUDRATE = 115200;
 
 int graphWidth = 300;
@@ -30,32 +30,9 @@ int requestCount = 0; // Count of times requests were sent out
 boolean requestData = false; // Are we sending data
 
 // Vehicle variables
-int FHR = 0;
-int RHR = 0; 
-int cadenceFront = 0;
-int cadenceRear = 0; 
-int powerFront = 0;
-int powerRear = 0; 
-
-int batt1 = 0;
-int batt2 = 0;
-
-int c02 = 0; 
-
-float brakeFront = 0;
-float brakeRear = 0; 
-
-float humidity = 0;
-float temperature = 0.0; // Temperature (recieved as (degC * 2) + 50)
-
-float speedEncoder = 0.0; // Speed km/h from encoder
-float speedGPS = 0.0;
-float distance = 0.0; // Distance in km
-float distanceGPS = 0.0;
-int rotations = 0; // Wheel rotation count, used to calculate distance
+float distance = 0.0; // Distance remaining in km
 float WHEEL_CIRC = 2.104; // Wheel circumference in m
 float KM_TO_MI = 1.0 / 1.604;
-
 BulkDataStruct dataIn = new BulkDataStruct();
 
 void drawPlot (GPlot plot) {
@@ -116,7 +93,7 @@ public void setup() {
   
   // If the ideal is found, act on it like if the start button is pressed
   if (idealIndex != -1) {
-    bike.line = new Serial(this, idealSerialLine, BAUDRATE);
+    telemetryLine = new Serial(this, idealSerialLine, BAUDRATE);
     requestData = true;
     serialSelect.setEnabled(false); //Disable the serial selector
     serialSelect.setSelected(idealIndex); // Put it to show the selected line
@@ -135,87 +112,28 @@ public void draw() {
   if (frameCount % (frameRateSet / requestFreq) == 0) {
     long startTime = millis();
     
-    // Serial requests, only if connected though
-    if (bike.line != null) {
+    // Update data, only if connected though
+    if (telemetryLine != null) {
       
-      if (!individualRequests) {
-        dataIn.readBulkData(bike.line);
-        
-        FHR = dataIn.fhr;
-        RHR = dataIn.rhr;
-        cadenceFront = dataIn.fcad;
-        cadenceRear = dataIn.rcad;
-        powerFront = dataIn.fpwr;
-        powerRear = dataIn.rpwr; 
-  
-        batt1 = dataIn.fBatt;
-        batt2 = dataIn.rBatt;
-        
-        c02 = dataIn.CO2;
-        brakeFront = dataIn.frontBrakeT;
-        brakeRear = dataIn.rearBrakeT;
-        
-        humidity = dataIn.humid;
-        temperature = dataIn.temp;
-        
-        distanceGPS = dataIn.gpsDist;
-        speedGPS = dataIn.speedGPS;
-        speedEncoder = dataIn.speedEncoder;
-        rotations = dataIn.rotations;
-      }
-      else {
-        
-        //println("============================");
-        FHR = int(bike.requestDataTwice('a'));
-        RHR = int(bike.requestDataTwice('b'));
-        cadenceFront = int(bike.requestDataTwice('c'));
-        cadenceRear = int(bike.requestDataTwice('d'));
-        powerFront = int(bike.requestDataTwice('e'));
-        powerRear = int(bike.requestDataTwice('f')); 
-  
-        batt1 = int(bike.requestDataTwice('i'));
-        batt2 = int(bike.requestDataTwice('j'));
-        
-        c02 = int(bike.requestDataTwice('k'));
-        brakeFront = int(bike.requestDataTwice('w'));
-        brakeRear = int(bike.requestDataTwice('x'));
-        
-        // Since humidity and temp are based off of the value of a single byte 
-        // we need to pick out the first character and convert to number
-        // To avoid issues need to check for empty strings
-        String temporary = bike.requestData('h');
-        if (temporary.length() > 0) {
-          humidity = float(byte(temporary.charAt(0)));
-          humidity /= 2; // Halve to get the real value
-        }
-        
-        temporary = bike.requestData('t');
-        if (temporary.length() > 0) {
-          temperature = int(byte(temporary.charAt(0)));
-          temperature = (temperature / 2) - 50;
-        }
-  
-        speedEncoder = float(bike.requestDataTwice('s'));
-        rotations = int(bike.requestDataTwice('q'));
-      }
+      dataIn.readBulkData(telemetryLine);
       
       // Distance covered to distance remaining in miles
-      distance = float(rotations) * WHEEL_CIRC / 1000.0; // Find distance travelled (km)
+      distance = float(dataIn.rotations) * WHEEL_CIRC / 1000.0; // Find distance travelled (km)
       distance = 5 - distance * KM_TO_MI;
       
       // Update all the rotating buffers
       while (speedBuffer.getNPoints() > graphWidth) speedBuffer.remove(0); // Remove all extra poiunts
-      speedBuffer.add(requestCount, speedEncoder * KM_TO_MI);
+      speedBuffer.add(requestCount, dataIn.speedEncoder * KM_TO_MI);
       speedPlot.setPoints(speedBuffer);
   
       while (powerBufferFront.getNPoints() > graphWidth) powerBufferFront.remove(0);
-      powerBufferFront.add(requestCount, powerFront);
+      powerBufferFront.add(requestCount, dataIn.fpwr);
       
       while (powerBufferRear.getNPoints() > graphWidth) powerBufferRear.remove(0);
-      powerBufferRear.add(requestCount, powerRear);
+      powerBufferRear.add(requestCount, dataIn.rpwr);
       
       while (powerBufferTotal.getNPoints() > graphWidth) powerBufferTotal.remove(0);
-      powerBufferTotal.add(requestCount, powerFront + powerRear);
+      powerBufferTotal.add(requestCount, dataIn.fpwr + dataIn.rpwr);
       
       powerPlot.removeLayer("total");
       powerPlot.removeLayer("rear");
@@ -229,30 +147,30 @@ public void draw() {
       powerPlot.getLayer("front").setLineColor(color(0, 0, 255));
   
       // Update the labels
-      batt1Lbl.setText(str(batt1));
-      batt2Lbl.setText(str(batt2));
-      c02Lbl.setText(str(c02));
+      batt1Lbl.setText(str(dataIn.fBatt));
+      batt2Lbl.setText(str(dataIn.rBatt));
+      c02Lbl.setText(str(dataIn.CO2));
       distLbl.setText(str(distance));
-      wheelSpeedLbl.setText(str(speedEncoder * KM_TO_MI));
-      gpsSpeedLbl.setText(str(speedGPS * KM_TO_MI));
-      kmhSpeedLbl.setText(str(speedEncoder) + " / " + str(speedGPS));
-      totalPowerLbl.setText(str(powerFront + powerRear));
-      individualPowerLbl.setText(str(powerFront) + " / " + str(powerRear));
-      cadenceLbl.setText(str(cadenceFront) + " / " + str(cadenceRear));
-      heartRateLbl.setText(str(FHR) + " / " + str(RHR));
-      tempHumLbl.setText(str(temperature) + " / " + str(humidity) + "%");
-      brakeTempLbl.setText(str(brakeFront) + " / " + str(brakeRear));
-      gpsDistLbl.setText(str(distanceGPS * KM_TO_MI));
+      wheelSpeedLbl.setText(str(dataIn.speedEncoder * KM_TO_MI));
+      gpsSpeedLbl.setText(str(dataIn.speedGPS * KM_TO_MI));
+      kmhSpeedLbl.setText(str(dataIn.speedEncoder) + " / " + str(dataIn.speedGPS));
+      totalPowerLbl.setText(str(dataIn.fpwr + dataIn.rpwr));
+      individualPowerLbl.setText(str(dataIn.fpwr) + " / " + str(dataIn.rpwr));
+      cadenceLbl.setText(str(dataIn.fcad) + " / " + str(dataIn.rcad));
+      heartRateLbl.setText(str(dataIn.fhr) + " / " + str(dataIn.rhr));
+      tempHumLbl.setText(str(dataIn.temp) + " / " + str(dataIn.humid) + "%");
+      brakeTempLbl.setText(str(dataIn.frontBrakeT) + " / " + str(dataIn.rearBrakeT));
+      gpsDistLbl.setText(str(dataIn.gpsDist * KM_TO_MI));
       
       // Derive ETAs to 0.1 second
-      float ETAwheel = (distance / (speedEncoder / KM_TO_MI)) * 3600.0;
-      float ETAgps = (distanceGPS / speedGPS) * 3600.0;
+      float ETAwheel = (distance / (dataIn.speedEncoder / KM_TO_MI)) * 3600.0;
+      float ETAgps = (dataIn.gpsDist / dataIn.speedGPS) * 3600.0;
       ETAwheel = floor(ETAwheel * 10) / 10.0;
       ETAgps = floor(ETAgps * 10) / 10.0;
       
       // Zero them if their speed is 0 (ETA is infinity)
-      if (speedEncoder == 0) ETAwheel = 0;
-      if (speedGPS == 0) ETAgps = 0;
+      if (dataIn.speedEncoder == 0) ETAwheel = 0;
+      if (dataIn.speedGPS == 0) ETAgps = 0;
       
       ETALbl.setText(str(ETAwheel) + " / " + str(ETAgps));
   
@@ -268,6 +186,13 @@ public void draw() {
 
   drawPlot(speedPlot);
   drawPlot(powerPlot);
+}
+
+void endComms() {
+  // Shut down serial communications properly
+  if (telemetryLine != null) telemetryLine.stop(); // Close data line
+  telemetryLine = null;
+  requestData = false;
 }
 
 // Use this method to add additional statements
