@@ -27,14 +27,14 @@ public void serialSelectClick(GDropList source, GEvent event) { //_CODE_:serialS
 } //_CODE_:serialSelect:680077:
 
 public void runButtonClick(GButton source, GEvent event) { //_CODE_:runButton:452403:
-    if (requestData == false) {
-    // Start sending data becausew we weren't
+  if (requestData == false) {
+    // Start sending data because we weren't
     bike.line = new Serial(this, serialSelect.getSelectedText(), BAUDRATE);
     requestData = true;
     serialSelect.setEnabled(false); //Disable the serial selector
     runButton.setText("STOP");
     runButton.setLocalColorScheme(runButton.RED_SCHEME);
-    delay(5000); // Wait for four seconds before using the serial port
+    delay(2000); // Wait a bit before using the serial port
   }
   else {
     // Stop sending data, free serial line
@@ -56,7 +56,7 @@ public void createGUI(){
   G4P.setMouseOverEnabled(false);
   G4P.setDisplayFont("Arial", G4P.PLAIN, 16);
   surface.setTitle("Telemetry UI");
-  label1 = new GLabel(this, 0, 20, 110, 40);
+  label1 = new GLabel(this, 0, 10, 110, 40);
   label1.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
   label1.setText("Speed:");
   label1.setOpaque(false);
@@ -68,23 +68,23 @@ public void createGUI(){
   label3.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
   label3.setText("Batt. 1:");
   label3.setOpaque(false);
-  label4 = new GLabel(this, 0, 60, 110, 40);
+  label4 = new GLabel(this, 0, 90, 110, 40);
   label4.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
-  label4.setText("Distance:");
+  label4.setText("Dist. Rem.:");
   label4.setOpaque(false);
-  label5 = new GLabel(this, 0, 180, 110, 40);
+  label5 = new GLabel(this, 0, 220, 110, 40);
   label5.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
   label5.setText("Power (W):");
   label5.setOpaque(false);
-  label6 = new GLabel(this, 0, 220, 110, 40);
+  label6 = new GLabel(this, 0, 280, 110, 40);
   label6.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
   label6.setText("Cadence (RPM):");
   label6.setOpaque(false);
-  label7 = new GLabel(this, 0, 340, 110, 40);
+  label7 = new GLabel(this, 0, 320, 110, 40);
   label7.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
   label7.setText("Heart Rate (BPM):");
   label7.setOpaque(false);
-  label8 = new GLabel(this, 0, 280, 110, 40);
+  label8 = new GLabel(this, 310, 390, 130, 20);
   label8.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
   label8.setText("Temp. / Hum.:");
   label8.setOpaque(false);
@@ -98,47 +98,80 @@ public void createGUI(){
   batt2Lbl = new GLabel(this, 220, 450, 80, 20);
   batt2Lbl.setText("batt2lvl");
   batt2Lbl.setOpaque(false);
-  distLbl = new GLabel(this, 110, 60, 190, 40);
+  distLbl = new GLabel(this, 110, 90, 190, 40);
   distLbl.setText("distance");
   distLbl.setOpaque(false);
-  speedLbl = new GLabel(this, 110, 20, 190, 40);
-  speedLbl.setText("speed");
-  speedLbl.setOpaque(false);
-  powerLbl = new GLabel(this, 110, 180, 190, 40);
-  powerLbl.setText("power");
-  powerLbl.setOpaque(false);
-  cadenceLbl = new GLabel(this, 110, 220, 190, 40);
+  wheelSpeedLbl = new GLabel(this, 110, 10, 190, 40);
+  wheelSpeedLbl.setText("wheel speed");
+  wheelSpeedLbl.setOpaque(false);
+  totalPowerLbl = new GLabel(this, 110, 220, 190, 40);
+  totalPowerLbl.setText("total power");
+  totalPowerLbl.setOpaque(false);
+  cadenceLbl = new GLabel(this, 110, 280, 190, 40);
   cadenceLbl.setText("cadence");
   cadenceLbl.setOpaque(false);
-  heartRateLbl = new GLabel(this, 110, 340, 190, 40);
+  heartRateLbl = new GLabel(this, 110, 320, 190, 40);
   heartRateLbl.setText("heart rate");
   heartRateLbl.setOpaque(false);
-  tempHumLbl = new GLabel(this, 110, 280, 190, 40);
+  tempHumLbl = new GLabel(this, 440, 390, 270, 20);
   tempHumLbl.setText("temp/hum");
   tempHumLbl.setOpaque(false);
-  serialSelect = new GDropList(this, 140, 400, 120, 80, 3, 10);
+  serialSelect = new GDropList(this, 140, 400, 160, 80, 3, 10);
   serialSelect.setItems(loadStrings("list_680077"), 0);
   serialSelect.addEventHandler(this, "serialSelectClick");
   runButton = new GButton(this, 10, 400, 120, 20);
   runButton.setText("Start");
   runButton.setLocalColorScheme(GCScheme.GREEN_SCHEME);
   runButton.addEventHandler(this, "runButtonClick");
-  label9 = new GLabel(this, 340, 380, 100, 20);
+  label9 = new GLabel(this, 310, 410, 130, 20);
   label9.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
   label9.setText("CO2:");
   label9.setOpaque(false);
-  label10 = new GLabel(this, 340, 435, 100, 20);
+  label10 = new GLabel(this, 310, 430, 130, 40);
   label10.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
-  label10.setText("BTemp F/R:");
+  label10.setText("Brake Temp.:");
   label10.setOpaque(false);
-  c02Lbl = new GLabel(this, 460, 380, 80, 20);
-  c02Lbl.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  c02Lbl = new GLabel(this, 440, 410, 270, 20);
   c02Lbl.setText("CO2");
   c02Lbl.setOpaque(false);
-  brakeTempLbl = new GLabel(this, 460, 435, 80, 20);
-  brakeTempLbl.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  brakeTempLbl = new GLabel(this, 440, 430, 270, 40);
   brakeTempLbl.setText("brake");
   brakeTempLbl.setOpaque(false);
+  label11 = new GLabel(this, 0, 50, 110, 20);
+  label11.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
+  label11.setText("GPS Speed:");
+  label11.setOpaque(false);
+  label12 = new GLabel(this, 0, 70, 110, 20);
+  label12.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
+  label12.setText("E/G km/h:");
+  label12.setOpaque(false);
+  gpsSpeedLbl = new GLabel(this, 110, 50, 190, 20);
+  gpsSpeedLbl.setText("gps speed");
+  gpsSpeedLbl.setOpaque(false);
+  kmhSpeedLbl = new GLabel(this, 110, 70, 190, 20);
+  kmhSpeedLbl.setText("km/h speeds");
+  kmhSpeedLbl.setOpaque(false);
+  label13 = new GLabel(this, 0, 260, 110, 20);
+  label13.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
+  label13.setText("Ind. Pwr.:");
+  label13.setOpaque(false);
+  individualPowerLbl = new GLabel(this, 110, 260, 190, 20);
+  individualPowerLbl.setText("individual power");
+  individualPowerLbl.setOpaque(false);
+  label14 = new GLabel(this, 0, 130, 110, 20);
+  label14.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
+  label14.setText("D. R. GPS:");
+  label14.setOpaque(false);
+  gpsDistLbl = new GLabel(this, 110, 130, 190, 20);
+  gpsDistLbl.setText("gps distance");
+  gpsDistLbl.setOpaque(false);
+  label15 = new GLabel(this, 0, 150, 110, 20);
+  label15.setTextAlign(GAlign.RIGHT, GAlign.MIDDLE);
+  label15.setText("ETA:");
+  label15.setOpaque(false);
+  ETALbl = new GLabel(this, 110, 150, 190, 20);
+  ETALbl.setText("ETA times");
+  ETALbl.setOpaque(false);
 }
 
 // Variable declarations 
@@ -155,8 +188,8 @@ GButton exitBtn;
 GLabel batt1Lbl; 
 GLabel batt2Lbl; 
 GLabel distLbl; 
-GLabel speedLbl; 
-GLabel powerLbl; 
+GLabel wheelSpeedLbl; 
+GLabel totalPowerLbl; 
 GLabel cadenceLbl; 
 GLabel heartRateLbl; 
 GLabel tempHumLbl; 
@@ -166,3 +199,13 @@ GLabel label9;
 GLabel label10; 
 GLabel c02Lbl; 
 GLabel brakeTempLbl; 
+GLabel label11; 
+GLabel label12; 
+GLabel gpsSpeedLbl; 
+GLabel kmhSpeedLbl; 
+GLabel label13; 
+GLabel individualPowerLbl; 
+GLabel label14; 
+GLabel gpsDistLbl; 
+GLabel label15; 
+GLabel ETALbl; 
