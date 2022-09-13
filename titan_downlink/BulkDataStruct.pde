@@ -10,24 +10,24 @@ class BulkDataStruct {
   byte fhr, rhr, fcad, rcad;
   int fpwr, rpwr; 
   
-  void readBulkData(Serial line) {
+  boolean readBulkData(Serial line) {
     
     int timeOutPeriod = 200;
     
-    do {
-      int timeOutMark = millis() + timeOutPeriod;
-      line.write('{');
-      
-      // Wait for message before retrying
-      while ((line.available() < 32) && (millis() < timeOutMark)) {
-        delay(5);
-      }
-    } while (line.available() < 32);
+    int timeOutMark = millis() + timeOutPeriod;
+    line.clear(); // Clear any leading data
+    line.write('{');
     
+    // Wait for message before retrying
+    while ((line.available() < 32) && (millis() < timeOutMark)) {
+      delay(5);
+    }
+    
+    if (line.available() < 32) return(false); // Return false on fail
+    
+    // Read data in if it arrived ok
     byte bufIn[] = line.readBytes(32);
     line.clear(); // Clear any trailing data
-    
-    //for (byte i = 0; i < 32; i ++) print(char(bufIn[i]));
     
     this.gpsDist = bytesToInt(bufIn, 2, 2) / 1000.0;
     this.speedEncoder = bytesToInt(bufIn, 4, 4) / 1000.0;
@@ -46,6 +46,8 @@ class BulkDataStruct {
     this.rcad = bufIn[27];
     this.fpwr = bytesToInt(bufIn, 28, 2);
     this.rpwr = bytesToInt(bufIn, 30, 2); 
+    
+    return(true);
   }
   
   private int bytesToInt(byte array[], int startIndex, int widthOfField) {

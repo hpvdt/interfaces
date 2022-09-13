@@ -1,6 +1,7 @@
 import grafica.*;
 
-String idealSerialLine = "/dev/ttyUSB0"; // Ideal line, if present connected to automatically
+String idealSerialLine = "/dev/serial0"; // Ideal line, if present connected to automatically
+// 'serial0' is the hardware serial on the RPi
 boolean individualRequests = false;
 
 // Need G4P library
@@ -46,7 +47,8 @@ void drawPlot (GPlot plot) {
 }
 
 public void setup() {
-  size(720, 480, JAVA2D);
+  fullScreen();
+  //size(720, 480, JAVA2D);
   createGUI();
   customGUI();
 
@@ -59,11 +61,12 @@ public void setup() {
   tempHumLbl.setFont(regLabels);
   c02Lbl.setFont(regLabels);
   brakeTempLbl.setFont(bigLabels);
+  connectionLbl.setFont(bigLabels);
 
   speedPlot = new GPlot(this);
   speedPlot.setPos(330, 20);
   speedPlot.setMar(10, 0, 0, 0);
-  speedPlot.setDim(380, 160);
+  speedPlot.setDim(450, 160);
   speedPlot.setAxesOffset(4);
   speedPlot.setTicksLength(4);
   speedPlot.getYAxis().setAxisLabelText("Speed (mph)");
@@ -71,7 +74,7 @@ public void setup() {
   powerPlot = new GPlot(this);
   powerPlot.setPos(330, 210);
   powerPlot.setMar(10, 0, 0, 0);
-  powerPlot.setDim(380, 160);
+  powerPlot.setDim(450, 160);
   powerPlot.setAxesOffset(4);
   powerPlot.setTicksLength(4);
   powerPlot.getYAxis().setAxisLabelText("Total Power (W)");
@@ -115,70 +118,71 @@ public void draw() {
     // Update data, only if connected though
     if (telemetryLine != null) {
       
-      dataIn.readBulkData(telemetryLine);
+      boolean recievedData = dataIn.readBulkData(telemetryLine);
       
-      // Distance covered to distance remaining in miles
-      distance = float(dataIn.rotations) * WHEEL_CIRC / 1000.0; // Find distance travelled (km)
-      distance = 5 - distance * KM_TO_MI;
+      connectionLbl.setVisible(!recievedData);
       
-      // Update all the rotating buffers
-      while (speedBuffer.getNPoints() > graphWidth) speedBuffer.remove(0); // Remove all extra poiunts
-      speedBuffer.add(requestCount, dataIn.speedEncoder * KM_TO_MI);
-      speedPlot.setPoints(speedBuffer);
-  
-      while (powerBufferFront.getNPoints() > graphWidth) powerBufferFront.remove(0);
-      powerBufferFront.add(requestCount, dataIn.fpwr);
+      if (recievedData == true) {
+        // Distance covered to distance remaining in miles
+        distance = float(dataIn.rotations) * WHEEL_CIRC / 1000.0; // Find distance travelled (km)
+        distance = 5 - distance * KM_TO_MI;
+        
+        // Update all the rotating buffers
+        while (speedBuffer.getNPoints() > graphWidth) speedBuffer.remove(0); // Remove all extra poiunts
+        speedBuffer.add(requestCount, dataIn.speedEncoder * KM_TO_MI);
+        speedPlot.setPoints(speedBuffer);
+    
+        while (powerBufferFront.getNPoints() > graphWidth) powerBufferFront.remove(0);
+        powerBufferFront.add(requestCount, dataIn.fpwr);
+        
+        while (powerBufferRear.getNPoints() > graphWidth) powerBufferRear.remove(0);
+        powerBufferRear.add(requestCount, dataIn.rpwr);
+        
+        while (powerBufferTotal.getNPoints() > graphWidth) powerBufferTotal.remove(0);
+        powerBufferTotal.add(requestCount, dataIn.fpwr + dataIn.rpwr);
+        
+        powerPlot.removeLayer("total");
+        powerPlot.removeLayer("rear");
+        powerPlot.removeLayer("front");
+        
+        powerPlot.addLayer("total", powerBufferTotal);
+        powerPlot.getLayer("total").setLineColor(color(0, 0, 0));
+        powerPlot.addLayer("rear", powerBufferRear);
+        powerPlot.getLayer("rear").setLineColor(color(255, 0, 0));
+        powerPlot.addLayer("front", powerBufferFront);
+        powerPlot.getLayer("front").setLineColor(color(0, 0, 255));
+    
+        // Update the labels
+        batt1Lbl.setText(str(dataIn.fBatt));
+        batt2Lbl.setText(str(dataIn.rBatt));
+        c02Lbl.setText(str(dataIn.CO2));
+        distLbl.setText(str(distance));
+        wheelSpeedLbl.setText(str(dataIn.speedEncoder * KM_TO_MI));
+        gpsSpeedLbl.setText(str(dataIn.speedGPS * KM_TO_MI));
+        kmhSpeedLbl.setText(str(dataIn.speedEncoder) + " / " + str(dataIn.speedGPS));
+        totalPowerLbl.setText(str(dataIn.fpwr + dataIn.rpwr));
+        individualPowerLbl.setText(str(dataIn.fpwr) + " / " + str(dataIn.rpwr));
+        cadenceLbl.setText(str(dataIn.fcad) + " / " + str(dataIn.rcad));
+        heartRateLbl.setText(str(dataIn.fhr) + " / " + str(dataIn.rhr));
+        tempHumLbl.setText(str(dataIn.temp) + " / " + str(dataIn.humid) + "%");
+        brakeTempLbl.setText(str(dataIn.frontBrakeT) + " / " + str(dataIn.rearBrakeT));
+        gpsDistLbl.setText(str(dataIn.gpsDist * KM_TO_MI));
+        
+        // Derive ETAs to 0.1 second
+        float ETAwheel = (distance / (dataIn.speedEncoder / KM_TO_MI)) * 3600.0;
+        float ETAgps = (dataIn.gpsDist / dataIn.speedGPS) * 3600.0;
+        ETAwheel = floor(ETAwheel * 10) / 10.0;
+        ETAgps = floor(ETAgps * 10) / 10.0;
+        
+        // Zero them if their speed is 0 (ETA is infinity)
+        if (dataIn.speedEncoder == 0) ETAwheel = 0;
+        if (dataIn.speedGPS == 0) ETAgps = 0;
+        
+        ETALbl.setText(str(ETAwheel) + " / " + str(ETAgps));
+      }
       
-      while (powerBufferRear.getNPoints() > graphWidth) powerBufferRear.remove(0);
-      powerBufferRear.add(requestCount, dataIn.rpwr);
-      
-      while (powerBufferTotal.getNPoints() > graphWidth) powerBufferTotal.remove(0);
-      powerBufferTotal.add(requestCount, dataIn.fpwr + dataIn.rpwr);
-      
-      powerPlot.removeLayer("total");
-      powerPlot.removeLayer("rear");
-      powerPlot.removeLayer("front");
-      
-      powerPlot.addLayer("total", powerBufferTotal);
-      powerPlot.getLayer("total").setLineColor(color(0, 0, 0));
-      powerPlot.addLayer("rear", powerBufferRear);
-      powerPlot.getLayer("rear").setLineColor(color(255, 0, 0));
-      powerPlot.addLayer("front", powerBufferFront);
-      powerPlot.getLayer("front").setLineColor(color(0, 0, 255));
-  
-      // Update the labels
-      batt1Lbl.setText(str(dataIn.fBatt));
-      batt2Lbl.setText(str(dataIn.rBatt));
-      c02Lbl.setText(str(dataIn.CO2));
-      distLbl.setText(str(distance));
-      wheelSpeedLbl.setText(str(dataIn.speedEncoder * KM_TO_MI));
-      gpsSpeedLbl.setText(str(dataIn.speedGPS * KM_TO_MI));
-      kmhSpeedLbl.setText(str(dataIn.speedEncoder) + " / " + str(dataIn.speedGPS));
-      totalPowerLbl.setText(str(dataIn.fpwr + dataIn.rpwr));
-      individualPowerLbl.setText(str(dataIn.fpwr) + " / " + str(dataIn.rpwr));
-      cadenceLbl.setText(str(dataIn.fcad) + " / " + str(dataIn.rcad));
-      heartRateLbl.setText(str(dataIn.fhr) + " / " + str(dataIn.rhr));
-      tempHumLbl.setText(str(dataIn.temp) + " / " + str(dataIn.humid) + "%");
-      brakeTempLbl.setText(str(dataIn.frontBrakeT) + " / " + str(dataIn.rearBrakeT));
-      gpsDistLbl.setText(str(dataIn.gpsDist * KM_TO_MI));
-      
-      // Derive ETAs to 0.1 second
-      float ETAwheel = (distance / (dataIn.speedEncoder / KM_TO_MI)) * 3600.0;
-      float ETAgps = (dataIn.gpsDist / dataIn.speedGPS) * 3600.0;
-      ETAwheel = floor(ETAwheel * 10) / 10.0;
-      ETAgps = floor(ETAgps * 10) / 10.0;
-      
-      // Zero them if their speed is 0 (ETA is infinity)
-      if (dataIn.speedEncoder == 0) ETAwheel = 0;
-      if (dataIn.speedGPS == 0) ETAgps = 0;
-      
-      ETALbl.setText(str(ETAwheel) + " / " + str(ETAgps));
-  
       requestCount++; // Increase count
-      
       long endTime = millis();
-      
-      
       print("Cycled in " + (endTime - startTime) + "ms, Current frame: " + requestCount);
       println(". Current frame rate is " + frameRate);
     }    

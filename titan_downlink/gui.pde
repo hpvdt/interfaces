@@ -172,6 +172,11 @@ public void createGUI(){
   ETALbl = new GLabel(this, 110, 150, 190, 20);
   ETALbl.setText("ETA times");
   ETALbl.setOpaque(false);
+  connectionLbl = new GLabel(this, 0, 170, 300, 50);
+  connectionLbl.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  connectionLbl.setText("CONNECTION LOST");
+  connectionLbl.setLocalColorScheme(GCScheme.RED_SCHEME);
+  connectionLbl.setOpaque(false);
 }
 
 // Variable declarations 
@@ -209,3 +214,4 @@ GLabel label14;
 GLabel gpsDistLbl; 
 GLabel label15; 
 GLabel ETALbl; 
+GLabel connectionLbl; 
