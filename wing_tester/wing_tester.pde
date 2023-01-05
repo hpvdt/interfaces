@@ -6,8 +6,7 @@ import processing.serial.*;
 Serial arduino; // used to communicate to the arduino
 int BAUDRATE = 115200;
 
-char start = '[';
-char ending = ']';
+char start = '\n';
 char separator = ';';
 
 int loadCells = 6;
@@ -105,13 +104,14 @@ public void setup() {
 public void draw() {
   background(230);
   
-  // read one packet which consists of all the load cell readings e.g. [1;2;3;4;5;6]
-  if (arduino.available() > 0) {
+  // Check is Serial line is okay (active) and has data ready
+  // Read one packet which consists of all the load cell readings e.g. 1;2;3;4;5;6;\n
+  if (arduino.active() && arduino.available() > 0) {
     while (arduino.readChar() != start) {
       // get to the start of the packet
     }
     
-    for (int lc = 0; lc < loadCells - 1; lc++) {
+    for (int lc = 0; lc < loadCells; lc++) {
       for (int i = 0; i < digits; i++) {
         while (arduino.available() == 0) {
           // Wait for data to come in if we run out of characters
@@ -141,31 +141,6 @@ public void draw() {
       if (dataPoints[lc].getNPoints() > nPointsPlot) {
         dataPoints[lc].remove(0);
       }
-    }
-    
-    // for the last load cell reading
-    for (int i = 0; i < digits; i++) {
-      while (arduino.available() == 0) {
-        // Wait for data to come in if we run out of characters
-        delay(10);
-      }
-      
-      char current = arduino.readChar();
-      if (current == ending) {
-        arduino.readChar(); // newline
-        for (int j = i; j < digits; j++) {
-          buffer[j] = '\0';
-        }
-        break;
-      } else {
-        buffer[i] = current;
-      }
-    }
-    
-    raw[loadCells - 1] = charToFloat(buffer);
-    dataPoints[loadCells - 1].add(x, raw[loadCells - 1]);
-    if (dataPoints[loadCells - 1].getNPoints() > nPointsPlot) {
-      dataPoints[loadCells - 1].remove(0);
     }
     
     x++;
